@@ -107,9 +107,13 @@ class Message(object):
 			log.error(
 				'Error while trying to compile the json string to send: {0}'.format(str(e)))
 			return False
-
-		response = requests.post(
-			self.send_url, data, headers=headers, auth=self.auth, verify=self.verify, **kwargs)
+		if user_id:
+			response = requests.post(
+			self.send_as_url.format(user_id=user_id), data, headers=headers, auth=self.auth, verify=self.verify, **kwargs)
+		else:
+			url = self.send_url
+			response = requests.post(
+				self.send_url, data, headers=headers, auth=self.auth, verify=self.verify, **kwargs)
 		log.debug('response from server for sending message:' + str(response))
 		log.debug("respnse body: {}".format(response.text))
 		if response.status_code != 202:
